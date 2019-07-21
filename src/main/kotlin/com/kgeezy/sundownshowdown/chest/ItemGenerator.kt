@@ -1,6 +1,8 @@
 package com.kgeezy.sundownshowdown.chest
 
+import com.kgeezy.sundownshowdown.util.int
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
@@ -12,12 +14,9 @@ enum class ItemChance {
 }
 
 class ItemGenerator {
-
     private val rng: Random by lazy {
         Random()
     }
-
-    val air = ItemStack(Material.AIR, 0)
 
     val lowTierItems = listOf(
 
@@ -73,9 +72,18 @@ class ItemGenerator {
     )
 
 
-    val godItems = listOf(
-        ItemStack(Material.DIAMOND_SWORD, 1)
+    private val godItems = listOf(
+        /**
+         * Weapons
+         */
+        ItemStack(Material.DIAMOND_SWORD, 1).apply {
+            itemMeta?.let { stackMeta ->
+                stackMeta.addEnchant(Enchantment.DAMAGE_ALL, rng.int(2, 3), false)
+                setItemMeta(stackMeta)
+            }
+        }
     )
+
 
     fun generateRandomItem(): ItemStack {
         return when (getItemChance()) {
@@ -87,7 +95,7 @@ class ItemGenerator {
     }
 
     private fun getItemChance(): ItemChance {
-        return when (rng.nextInt(20) + 1) {
+        return when (rng.int(1, 20)) {
             1 -> ItemChance.GOD
             2,3 -> ItemChance.HIGH
             4,5,6,7 -> ItemChance.MED

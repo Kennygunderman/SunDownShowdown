@@ -6,3 +6,6 @@ commands:
   chest:
     description: places a chest filled with loot
     usage: /<command>
+  restock:
+    description: restocks chests
+    usage: /<command>

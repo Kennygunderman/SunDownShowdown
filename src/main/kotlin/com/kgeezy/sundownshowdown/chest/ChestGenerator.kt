@@ -1,5 +1,8 @@
 package com.kgeezy.sundownshowdown.chest
 
+import com.kgeezy.sundownshowdown.util.ChestLocationFile
+import com.kgeezy.sundownshowdown.util.int
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.Block
@@ -14,7 +17,8 @@ import java.util.*
  */
 
 private const val CHEST_SIZE = 26
-class ChestGenerator constructor(private val itemGenerator: ItemGenerator) {
+
+class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileManager: ChestLocationFile) {
 
     private val rng by lazy {
         Random()
@@ -34,19 +38,83 @@ class ChestGenerator constructor(private val itemGenerator: ItemGenerator) {
 
         world?.let { w ->
             val chestBlock = w.getBlockAt(block.location.apply { y++ })
-            chestBlock.type = Material.CHEST
+            createChestAtBlock(chestBlock)
+            saveChestLocation(chestBlock.location)
+        }
+    }
 
-            val chest = chestBlock.state as Chest
-            generateChestContents { chestIndex, item ->
-                chest.inventory.setItem(chestIndex, item)
-            }
+    private fun createChestAtBlock(block: Block) {
+        block.type = Material.CHEST
+
+        val chest = block.state as Chest
+        generateChestContents { chestIndex, item ->
+            chest.inventory.setItem(chestIndex, item)
         }
     }
 
     private fun generateChestContents(callback: (chestIndex: Int, item: ItemStack) -> Unit) {
-        val rolls = rng.nextInt(5) + 2 // 2-5 rolls per chest
+        val rolls = rng.int(2, 5)
+
         for (i in 0 until rolls) {
-            callback(rng.nextInt(CHEST_SIZE), itemGenerator.generateRandomItem())
+            val index = rng.nextInt(CHEST_SIZE)
+            callback(index, itemGenerator.generateRandomItem())
         }
+    }
+
+    private fun saveChestLocation(location: Location) {
+        val yml = fileManager.getChestLocationYml()
+        val config = fileManager.configFromYml(yml)
+
+        val size = config
+            .getConfigurationSection("${world?.name}")
+            ?.getConfigurationSection("chests")
+            ?.getKeys(false)
+            ?.size ?: 0
+
+        world?.name.let { worldName ->
+            config.set("$worldName.chests.$size.x", location.x)
+            config.set("$worldName.chests.$size.y", location.y)
+            config.set("$worldName.chests.$size.z", location.z)
+            config.save(yml)
+        }
+    }
+
+    fun restockChests() {
+        val config = fileManager.configFromYml(fileManager.getChestLocationYml())
+
+        val chestSection = config
+            .getConfigurationSection("${world?.name}")
+            ?.getConfigurationSection("chests")
+
+        chestSection?.getKeys(false)?.forEach { chestIndex ->
+            val x = chestSection.getConfigurationSection(chestIndex)?.get("x") as? Double
+            val y = chestSection.getConfigurationSection(chestIndex)?.get("y") as? Double
+            val z = chestSection.getConfigurationSection(chestIndex)?.get("z") as? Double
+
+            if (x != null && y != null && z != null) {
+                world?.getBlockAt(x.toInt(), y.toInt(), z.toInt())?.let { block ->
+                    (block.state as? Chest)?.inventory?.clear()
+                    createChestAtBlock(block)
+                }
+            }
+        }
+    }
+
+    /**
+     * Validate chests still exist in the world
+     */
+    fun validateChests() {
+        /**
+         * TODO: Add this logic
+         */
+    }
+
+    /**
+     * Removes a chest
+     */
+    fun removeChest() {
+        /**
+         * TODO: Add this logic
+         */
     }
 }
