@@ -1,3 +1,8 @@
 name: SunDownShowdown
-main: com.kgeezy.sundownshowdown.SunDownShowDown
+main: com.kgeezy.sundownshowdown.SunDownShowdown
 version: 1.0.0
+api-version: 1.13
+commands:
+  chest:
+    description: places a chest filled with loot
+    usage: /<command>
