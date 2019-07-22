@@ -30,7 +30,7 @@ class SunDownShowdown : JavaPlugin() {
          * Init the ShowDownScheduler & start the task
          */
         showDownScheduler = ShowDownScheduler(this, chestGenerator).apply {
-            scheduleShowdownTask()
+            scheduleMainTask()
         }
     }
 
