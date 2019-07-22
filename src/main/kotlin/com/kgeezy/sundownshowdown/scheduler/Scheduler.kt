@@ -1,17 +1,24 @@
 package com.kgeezy.sundownshowdown.scheduler
 
+import com.kgeezy.sundownshowdown.DEFAULT_WORLD
 import com.kgeezy.sundownshowdown.DUSK
 import com.kgeezy.sundownshowdown.MINUTE
 import com.kgeezy.sundownshowdown.SECOND
-import com.kgeezy.sundownshowdown.StringRes
-import com.kgeezy.sundownshowdown.chest.ChestGenerator
 import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
 
-class ShowDownScheduler(private val plugin: Plugin, private val chestGenerator: ChestGenerator, private val worldName: String = "world")  {
-    var currentTask = 0
-    var isFinalCountDownRunning = false
+interface ShowdownSchedulerCallback {
+    fun finalCountdownDone()
+    fun secondsLeft(secondsLeft: Long)
+}
+
+class ShowdownScheduler(private val plugin: Plugin, private val worldName: String = DEFAULT_WORLD)  {
+
+    var callback: ShowdownSchedulerCallback? = null
+
+    private var currentTask = 0
+    private var isFinalCountDownRunning = false
 
     fun scheduleMainTask() {
         currentTask = scheduleTask()
@@ -27,18 +34,24 @@ class ShowDownScheduler(private val plugin: Plugin, private val chestGenerator: 
                     cancelMainTask()
                     startFinalCountDownTask()
                 }
+                callback?.secondsLeft(getSecondsLeftFromTime(worldTime))
 
-                plugin.server.broadcastMessage(String.format(StringRes.SHOWDOWN_WILL_BEGIN_SECONDS, getSecondsLeftFromTime(worldTime)))
             }
-        }, 0, SECOND)
+        }, 0, SECOND * 20) //check every 20 seconds
 
+    /**
+     * This function is responsible for starting a final second by second count down when 5 seconds are left until
+     * the showdown begins.
+     *
+     * once the logic is met to begin the showdown (worldTime >= DUSK) the task should preform the
+     * necessary logic for running the showdown, cancel its self, and then reschedule the main task.
+     */
     private fun startFinalCountDownTask() {
         isFinalCountDownRunning = true
         object: BukkitRunnable() {
             override fun run() {
                 if (worldTime >= DUSK) {
-                    plugin.server.broadcastMessage(StringRes.SHOWDOWN_START)
-                    chestGenerator.restockChests()
+                    callback?.finalCountdownDone()
                     this.cancel()
                     isFinalCountDownRunning = false
                     scheduleMainTask()
@@ -46,20 +59,19 @@ class ShowDownScheduler(private val plugin: Plugin, private val chestGenerator: 
                 }
 
                 if (worldTime > DUSK - (SECOND * 6)) {
-                    plugin.server.broadcastMessage(String.format(StringRes.SHOWDOWN_WILL_BEGIN_SECONDS, getSecondsLeftFromTime(worldTime)))
+                    callback?.secondsLeft(getSecondsLeftFromTime(worldTime))
                 }
 
             }
         }.runTaskTimer(plugin, 0, SECOND)
     }
     
-    private fun getSecondsLeftFromTime(time: Long): String {
+    private fun getSecondsLeftFromTime(time: Long): Long {
         val ticksLeft = DUSK - time
-        val secondsLeft = ticksLeft / SECOND
-        return secondsLeft.toString()
+        return ticksLeft / SECOND
     }
 
-    private fun cancelMainTask() {
+    fun cancelMainTask() {
         Bukkit.getScheduler().cancelTask(currentTask)
     }
 }
