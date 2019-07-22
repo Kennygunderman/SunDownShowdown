@@ -1,11 +1,23 @@
 package com.kgeezy.sundownshowdown.mob
 
+import com.kgeezy.sundownshowdown.util.int
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.EntityType
 import java.util.*
 
 class MobSpawner(val world: World?) {
+
+    /**
+     * maximum amount to spawn if spawning random number of mobs see #spawnMobs
+     */
+    var minMultiple = 2
+
+    /**
+     * maximum amount to spawn if spawning random number of mobs see #spawnMobs
+     */
+    var maxMultiple = 4
+
     private val rng by lazy {
         Random()
     }
@@ -17,13 +29,23 @@ class MobSpawner(val world: World?) {
         EntityType.RAVAGER
     )
 
-    fun spawnMobs(location: Location) {
+    fun spawnMob(location: Location) {
         world?.spawnEntity(location, mobs[rng.nextInt(mobs.size)])
     }
-
-    fun spawnMobs(locations: List<Location>) {
+    
+    /**
+     * spawns mobs for all locations provided
+     *
+     * @param spawnMultiple if set to true, will spawn a random amount of mobs
+     * between the `minMultiple` and `maxMultiple` that were set.
+     */
+    fun spawnMobs(locations: List<Location>, spawnMultiple: Boolean = true) {
         locations.forEach { loc ->
-            spawnMobs(loc)
+            if (spawnMultiple) {
+                for (i in 0 until rng.int(minMultiple, maxMultiple)) spawnMob(loc)
+            } else {
+                spawnMob(loc)
+            }
         }
     }
 }
