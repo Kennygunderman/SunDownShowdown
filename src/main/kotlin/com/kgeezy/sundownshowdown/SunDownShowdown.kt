@@ -2,6 +2,7 @@ package com.kgeezy.sundownshowdown
 
 import com.kgeezy.sundownshowdown.chest.ChestGenerator
 import com.kgeezy.sundownshowdown.chest.ItemGenerator
+import com.kgeezy.sundownshowdown.scheduler.ShowDownScheduler
 import com.kgeezy.sundownshowdown.util.FileManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -15,6 +16,8 @@ class SunDownShowdown : JavaPlugin() {
         ChestGenerator(itemGenerator, FileManager.getInstance())
     }
 
+    private var showDownScheduler: ShowDownScheduler? = null
+
     override fun onEnable() {
         super.onEnable()
 
@@ -22,6 +25,13 @@ class SunDownShowdown : JavaPlugin() {
          * Initialize the File Manager for the plugin
          */
         FileManager.initialize(dataFolder)
+
+        /**
+         * Init the ShowDownScheduler & start the task
+         */
+        showDownScheduler = ShowDownScheduler(this, chestGenerator).apply {
+            scheduleShowdownTask()
+        }
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
