@@ -1,5 +1,6 @@
 package com.kgeezy.sundownshowdown.chest
 
+import com.kgeezy.sundownshowdown.StringRes
 import com.kgeezy.sundownshowdown.util.ChestLocationFile
 import com.kgeezy.sundownshowdown.util.int
 import org.bukkit.Location
@@ -33,7 +34,7 @@ class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileM
      */
     fun createChestAboveBlock(player: Player, block: Block) {
         if (block.type == Material.AIR) {
-            player.sendMessage("You cannot create a chest here, this is Air!")
+            player.sendMessage(StringRes.CANT_PLACE_CHEST_IN_AIR)
         }
 
         world?.let { w ->
