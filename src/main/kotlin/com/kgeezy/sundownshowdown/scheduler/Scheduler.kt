@@ -9,7 +9,7 @@ import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
 
-class ShowDownScheduler(private val plugin: Plugin, private val chestGenerator: ChestGenerator)  {
+class ShowDownScheduler(private val plugin: Plugin, private val chestGenerator: ChestGenerator, private val worldName: String = "world")  {
     var currentTask = 0
     var isFinalCountDownRunning = false
 
@@ -18,7 +18,7 @@ class ShowDownScheduler(private val plugin: Plugin, private val chestGenerator: 
     }
 
     private val worldTime
-            get() = plugin.server.getWorld("world")?.time ?: 0
+            get() = plugin.server.getWorld(worldName)?.time ?: 0
 
     private fun scheduleTask(): Int =
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
