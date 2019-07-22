@@ -30,13 +30,13 @@ class ShowDownScheduler(private val plugin: Plugin, private val chestGenerator: 
 
                 plugin.server.broadcastMessage(String.format(StringRes.SHOWDOWN_WILL_BEGIN_SECONDS, getSecondsLeftFromTime(worldTime)))
             }
-        }, 0, SECOND * 1)
+        }, 0, SECOND)
 
     private fun startFinalCountDownTask() {
         isFinalCountDownRunning = true
         object: BukkitRunnable() {
             override fun run() {
-                if (worldTime > DUSK - (SECOND + 5)) {
+                if (worldTime > DUSK - (SECOND * 5)) {
                     plugin.server.broadcastMessage(String.format(StringRes.SHOWDOWN_WILL_BEGIN_SECONDS, getSecondsLeftFromTime(worldTime)))
                 }
 
