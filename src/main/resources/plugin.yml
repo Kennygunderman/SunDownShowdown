@@ -3,12 +3,12 @@ main: com.kgeezy.sundownshowdown.SunDownShowdown
 version: 1.0.0
 api-version: 1.13
 commands:
-  chest:
-    description: places a chest filled with loot
+  showdown chest add:
+    description: Places a chest filled with loot.
     usage: /<command>
-  restock:
-    description: restocks chests for the showdown
+  showdown chest restock:
+    description: Restocks chests for the Showdown.
     usage: /<command>
-  forcestart:
-    description: force starts the Showdown
+  showdown start:
+    description: Force starts the Showdown.
     usage: /<command>
