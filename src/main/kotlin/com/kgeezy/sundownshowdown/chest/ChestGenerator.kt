@@ -19,13 +19,11 @@ import java.util.*
 
 private const val CHEST_SIZE = 26
 
-class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileManager: ChestLocationFile) {
+class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileManager: ChestLocationFile, var world: World? = null) {
 
     private val rng by lazy {
         Random()
     }
-
-    var world: World? = null
 
     /**
      * creates a chest above the block that the Player is looking at, as long as the
@@ -80,9 +78,10 @@ class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileM
         }
     }
 
-    fun restockChests() {
-        val config = fileManager.configFromYml(fileManager.getChestLocationYml())
+    fun getChestLocations(): List<Location> {
+        val locations = mutableListOf<Location>()
 
+        val config = fileManager.configFromYml(fileManager.getChestLocationYml())
         val chestSection = config
             .getConfigurationSection("${world?.name}")
             ?.getConfigurationSection("chests")
@@ -93,10 +92,19 @@ class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileM
             val z = chestSection.getConfigurationSection(chestIndex)?.get("z") as? Double
 
             if (x != null && y != null && z != null) {
-                world?.getBlockAt(x.toInt(), y.toInt(), z.toInt())?.let { block ->
-                    (block.state as? Chest)?.inventory?.clear()
-                    createChestAtBlock(block)
-                }
+                val location = Location(world, x,y,z)
+                locations.add(location)
+            }
+        }
+
+        return locations
+    }
+
+    fun restockChests() {
+        getChestLocations().forEach { chestLocation ->
+            world?.getBlockAt(chestLocation)?.let { block ->
+                (block.state as? Chest)?.inventory?.clear()
+                createChestAtBlock(block)
             }
         }
     }

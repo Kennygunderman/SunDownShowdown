@@ -2,12 +2,17 @@ package com.kgeezy.sundownshowdown
 
 import com.kgeezy.sundownshowdown.chest.ChestGenerator
 import com.kgeezy.sundownshowdown.chest.ItemGenerator
-import com.kgeezy.sundownshowdown.scheduler.ShowDownScheduler
+import com.kgeezy.sundownshowdown.game.Showdown
+import com.kgeezy.sundownshowdown.mob.MobSpawner
+import com.kgeezy.sundownshowdown.scheduler.ShowdownScheduler
 import com.kgeezy.sundownshowdown.util.FileManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+
+
+const val DEFAULT_WORLD = "world"
 
 class SunDownShowdown : JavaPlugin() {
 
@@ -16,22 +21,25 @@ class SunDownShowdown : JavaPlugin() {
         ChestGenerator(itemGenerator, FileManager.getInstance())
     }
 
-    private var showDownScheduler: ShowDownScheduler? = null
+    private val showdown: Showdown by lazy {
+        val defaultWorld = server.getWorld(DEFAULT_WORLD)
+        val chestGenerator = ChestGenerator(ItemGenerator(), FileManager.getInstance(), defaultWorld)
+        val mobSpawner = MobSpawner(defaultWorld)
+        val scheduler = ShowdownScheduler(this)
+        Showdown(server, scheduler, chestGenerator, mobSpawner)
+    }
 
     override fun onEnable() {
         super.onEnable()
-
         /**
          * Initialize the File Manager for the plugin
          */
         FileManager.initialize(dataFolder)
 
         /**
-         * Init the ShowDownScheduler & start the task
+         * Start the showdown
          */
-        showDownScheduler = ShowDownScheduler(this, chestGenerator).apply {
-            scheduleMainTask()
-        }
+        showdown.enable()
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -46,8 +54,11 @@ class SunDownShowdown : JavaPlugin() {
             }
 
             RESTOCK -> {
-                chestGenerator.world = sender.world
-                chestGenerator.restockChests()
+                showdown.chestGenerator.restockChests()
+            }
+
+            FORCE_START -> {
+                showdown.startGame()
             }
         }
 
