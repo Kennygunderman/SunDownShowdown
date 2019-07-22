@@ -58,12 +58,16 @@ class SunDownShowdown : JavaPlugin() {
                     CHEST_RESTOCK_ARG -> {
                         showdown.chestGenerator.restockChests()
                     }
+
+                    null -> sender.sendMessage("Usages: /showdown chest <add|restock>")
                 }
             }
 
-            FORCE_START_ARG -> {
+            START_ARG -> {
                 showdown.startGame()
             }
+
+            null -> sender.sendMessage("Usages: /showdown <chest|start>")
         }
 
 
