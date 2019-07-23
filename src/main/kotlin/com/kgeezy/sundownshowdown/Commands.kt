@@ -1,5 +1,9 @@
 package com.kgeezy.sundownshowdown
 
-val CHEST = "chest"
-val RESTOCK = "restock"
-val FORCE_START = "forcestart"
+const val MAIN = "showdown"
+
+const val CHEST_ARG = "chest"
+const val CHEST_ADD_ARG = "add"
+const val CHEST_RESTOCK_ARG = "restock"
+
+const val START_ARG = "start"

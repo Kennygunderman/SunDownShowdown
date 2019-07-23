@@ -15,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin
 const val DEFAULT_WORLD = "world"
 
 class SunDownShowdown : JavaPlugin() {
-
     private val chestGenerator: ChestGenerator by lazy {
         val itemGenerator = ItemGenerator()
         ChestGenerator(itemGenerator, FileManager.getInstance())
@@ -43,25 +42,33 @@ class SunDownShowdown : JavaPlugin() {
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (sender !is Player) {
+        if (sender !is Player && command.name != MAIN) {
             return true
         }
 
-        when (command.name) {
-            CHEST -> {
-                chestGenerator.world = sender.world
-                chestGenerator.createChestAboveBlock(sender, sender.getTargetBlock(null, 200))
+        when (args.firstOrNull()) {
+            CHEST_ARG -> {
+                when (args.getOrNull(1)) {
+                    CHEST_ADD_ARG -> {
+                        chestGenerator.world = (sender as Player).world
+                        chestGenerator.createChestAboveBlock(sender, sender.getTargetBlock(null, 200))
+                    }
+
+                    CHEST_RESTOCK_ARG -> {
+                        showdown.chestGenerator.restockChests()
+                    }
+
+                    null -> sender.sendMessage(StringRes.SHOWDOWN_CHEST_CMD_USAGE)
+                }
             }
 
-            RESTOCK -> {
-                showdown.chestGenerator.restockChests()
-            }
-
-            FORCE_START -> {
+            START_ARG -> {
                 showdown.startGame()
             }
+
+            null -> sender.sendMessage(StringRes.SHOWDOWN_CMD_USAGE)
         }
 
-        return false
+        return true
     }
 }
