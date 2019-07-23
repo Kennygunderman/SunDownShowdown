@@ -13,15 +13,19 @@ interface ShowdownSchedulerCallback {
     fun secondsLeft(secondsLeft: Long)
 }
 
+const val TASK_NONE = 0
+
 class ShowdownScheduler(private val plugin: Plugin, private val worldName: String = DEFAULT_WORLD)  {
 
     var callback: ShowdownSchedulerCallback? = null
 
-    private var currentTask = 0
+    private var currentTask = TASK_NONE
     private var isFinalCountDownRunning = false
 
     fun scheduleMainTask() {
-        currentTask = scheduleTask()
+        if (currentTask == TASK_NONE) {
+            currentTask = scheduleTask()
+        }
     }
 
     private val worldTime
@@ -73,5 +77,6 @@ class ShowdownScheduler(private val plugin: Plugin, private val worldName: Strin
 
     fun cancelMainTask() {
         Bukkit.getScheduler().cancelTask(currentTask)
+        currentTask = TASK_NONE
     }
 }

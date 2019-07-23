@@ -36,7 +36,7 @@ class SunDownShowdown : JavaPlugin() {
         FileManager.initialize(dataFolder)
 
         /**
-         * Start the showdown
+         * start the showdown
          */
         showdown.enable()
     }
@@ -68,6 +68,16 @@ class SunDownShowdown : JavaPlugin() {
             START_ARG -> {
                 showdown.startGame()
                 sender.sendMessage(StringRes.SHOWDOWN_FORCE_STARTED)
+            }
+
+            ENABLE_ARG -> {
+                showdown.enable()
+                sender.sendMessage(StringRes.SHOWDOWN_ENABLE)
+            }
+
+            DISABLE_ARG -> {
+                showdown.disable()
+                sender.sendMessage(StringRes.SHOWDOWN_DISABLE)
             }
             
             null -> sender.sendMessage(StringRes.SHOWDOWN_CMD_USAGE)
