@@ -51,11 +51,14 @@ class SunDownShowdown : JavaPlugin() {
                 when (args.getOrNull(1)) {
                     CHEST_ADD_ARG -> {
                         chestGenerator.world = (sender as Player).world
-                        chestGenerator.createChestAboveBlock(sender, sender.getTargetBlock(null, 200))
+                        if (chestGenerator.createChestAboveBlock(sender, sender.getTargetBlock(null, 200))) {
+                            sender.sendMessage(StringRes.SHOWDOWN_CHEST_ADDED)
+                        }
                     }
 
                     CHEST_RESTOCK_ARG -> {
                         showdown.chestGenerator.restockChests()
+                        sender.sendMessage(StringRes.SHOWDOWN_CHESTS_RESTOCKED)
                     }
 
                     null -> sender.sendMessage(StringRes.SHOWDOWN_CHEST_CMD_USAGE)
@@ -64,11 +67,11 @@ class SunDownShowdown : JavaPlugin() {
 
             START_ARG -> {
                 showdown.startGame()
+                sender.sendMessage(StringRes.SHOWDOWN_FORCE_STARTED)
             }
-
+            
             null -> sender.sendMessage(StringRes.SHOWDOWN_CMD_USAGE)
         }
-
         return true
     }
 }
