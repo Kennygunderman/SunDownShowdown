@@ -8,6 +8,7 @@ import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
@@ -19,11 +20,20 @@ import java.util.*
 
 private const val CHEST_SIZE = 26
 
-class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileManager: ChestLocationFile, var world: World? = null) {
+class ChestGenerator(
+    private val itemGenerator: ItemGenerator,
+    fileManager: ChestLocationFile,
+    var world: World? = null
+) {
 
-    private val rng by lazy {
-        Random()
-    }
+    private val rng = Random()
+    private val yml = fileManager.getChestLocationYml()
+    private val fileConfig = fileManager.configFromYml(yml)
+
+    private val chestConfigSection: ConfigurationSection?
+        get() = fileConfig
+            .getConfigurationSection("${world?.name}")
+            ?.getConfigurationSection("chests")
 
     /**
      * creates a chest above the block that the Player is looking at, as long as the
@@ -63,44 +73,33 @@ class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileM
         }
     }
 
+
     private fun saveChestLocation(location: Location) {
-        val yml = fileManager.getChestLocationYml()
-        val config = fileManager.configFromYml(yml)
-
-        val size = config
-            .getConfigurationSection("${world?.name}")
-            ?.getConfigurationSection("chests")
-            ?.getKeys(false)
-            ?.size ?: 0
-
+        val size = chestConfigSection?.getKeys(false)?.size ?: 0
         world?.name.let { worldName ->
-            config.set("$worldName.chests.$size.x", location.x)
-            config.set("$worldName.chests.$size.y", location.y)
-            config.set("$worldName.chests.$size.z", location.z)
-            config.save(yml)
+            fileConfig.set("$worldName.chests.$size.x", location.x)
+            fileConfig.set("$worldName.chests.$size.y", location.y)
+            fileConfig.set("$worldName.chests.$size.z", location.z)
+            fileConfig.save(yml)
         }
     }
 
-    fun getChestLocations(): List<Location> {
-        val locations = mutableListOf<Location>()
-
-        val config = fileManager.configFromYml(fileManager.getChestLocationYml())
-        val chestSection = config
-            .getConfigurationSection("${world?.name}")
-            ?.getConfigurationSection("chests")
-
-        chestSection?.getKeys(false)?.forEach { chestIndex ->
-            val x = chestSection.getConfigurationSection(chestIndex)?.get("x") as? Double
-            val y = chestSection.getConfigurationSection(chestIndex)?.get("y") as? Double
-            val z = chestSection.getConfigurationSection(chestIndex)?.get("z") as? Double
-
-            if (x != null && y != null && z != null) {
-                val location = Location(world, x,y,z)
-                locations.add(location)
+    fun getChestLocations(): List<Location> = mutableListOf<Location>().apply {
+        chestConfigSection?.getKeys(false)?.forEach { chestIndex ->
+            getXyzForChestIndex(chestIndex) { x, y, z ->
+                if (x != null && y != null && z != null) {
+                    val location = Location(world, x, y, z)
+                    add(location)
+                }
             }
         }
+    }
 
-        return locations
+    private fun getXyzForChestIndex(chestIndex: String, callback: (x: Double?, y: Double?, z: Double?) -> Unit) {
+        val x = chestConfigSection?.getConfigurationSection(chestIndex)?.get("x") as? Double
+        val y = chestConfigSection?.getConfigurationSection(chestIndex)?.get("y") as? Double
+        val z = chestConfigSection?.getConfigurationSection(chestIndex)?.get("z") as? Double
+        callback.invoke(x, y, z)
     }
 
     fun restockChests() {
@@ -113,20 +112,32 @@ class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileM
     }
 
     /**
-     * Validate chests still exist in the world
-     */
-    fun validateChests() {
-        /**
-         * TODO: Add this logic
-         */
-    }
-
-    /**
      * Removes a chest
      */
-    fun removeChest() {
-        /**
-         * TODO: Add this logic
-         */
+    fun removeChest(location: Location): Boolean {
+        val block = world?.getBlockAt(location)
+        var blockFound = false
+        if (block?.state is Chest) {
+            chestConfigSection?.getKeys(false)?.forEach { chestIndex ->
+                getXyzForChestIndex(chestIndex) { x, y, z ->
+                    if (x == location.x && y == location.y && z == location.z) {
+                        blockFound = true
+                        block.setType(Material.AIR, false)
+                        chestConfigSection?.set(chestIndex, null)
+                        fileConfig.save(yml)
+                    }
+                }
+            }
+        }
+        return blockFound
+    }
+
+    fun removeAll() {
+        getChestLocations().forEach { loc ->
+            world?.getBlockAt(loc)?.type = Material.AIR
+        }
+
+        fileConfig.getConfigurationSection("${world?.name}")?.set("chests", null)
+        fileConfig.save(yml)
     }
 }
