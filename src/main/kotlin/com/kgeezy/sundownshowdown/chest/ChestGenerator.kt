@@ -84,25 +84,23 @@ class ChestGenerator(
         }
     }
 
-    fun getChestLocations(): List<Location> {
-        val locations = mutableListOf<Location>()
+    fun getChestLocations(): List<Location> = mutableListOf<Location>().apply {
         chestConfigSection?.getKeys(false)?.forEach { chestIndex ->
-            val x = chestConfigSection?.getConfigurationSection(chestIndex)?.get("x") as? Double
-            val y = chestConfigSection?.getConfigurationSection(chestIndex)?.get("y") as? Double
-            val z = chestConfigSection?.getConfigurationSection(chestIndex)?.get("z") as? Double
-
-            if (x != null && y != null && z != null) {
-                val location = Location(world, x, y, z)
-                locations.add(location)
+            getXyzForChestIndex(chestIndex) { x, y, z ->
+                if (x != null && y != null && z != null) {
+                    val location = Location(world, x, y, z)
+                    add(location)
+                }
             }
         }
-
-        return locations
     }
 
-//    private fun getXYZ(chestIndex: String): Triple<Double, Double, Double> {
-//     return Triple(1,1,1)
-//    }
+    private fun getXyzForChestIndex(chestIndex: String, callback: (x: Double?, y: Double?, z: Double?) -> Unit) {
+        val x = chestConfigSection?.getConfigurationSection(chestIndex)?.get("x") as? Double
+        val y = chestConfigSection?.getConfigurationSection(chestIndex)?.get("y") as? Double
+        val z = chestConfigSection?.getConfigurationSection(chestIndex)?.get("z") as? Double
+        callback.invoke(x, y, z)
+    }
 
     fun restockChests() {
         getChestLocations().forEach { chestLocation ->
@@ -127,33 +125,20 @@ class ChestGenerator(
      */
     fun removeChest(location: Location): Boolean {
         val block = world?.getBlockAt(location)
-        return if (block is Chest) {
-
-            /**
-             * clear  from config
-             */
-            //TODO: fix duplicated logic
-
+        var blockFound = false
+        if (block is Chest) {
             chestConfigSection?.getKeys(false)?.forEach { chestIndex ->
-                val x = chestConfigSection?.getConfigurationSection(chestIndex)?.get("x") as? Double
-                val y = chestConfigSection?.getConfigurationSection(chestIndex)?.get("y") as? Double
-                val z = chestConfigSection?.getConfigurationSection(chestIndex)?.get("z") as? Double
-
-                if (x == location.x && y == location.y && z == location.z) {
-                   //chest found at this location
-                    block.setType(Material.AIR, false)
-
-
-                    chestConfigSection?.set(chestIndex, null)
-                    fileConfig.save(yml)
-
+                getXyzForChestIndex(chestIndex) { x, y, z ->
+                    if (x == location.x && y == location.y && z == location.z) {
+                        blockFound = true
+                        block.setType(Material.AIR, false)
+                        chestConfigSection?.set(chestIndex, null)
+                        fileConfig.save(yml)
+                    }
                 }
             }
-
-                true
-        } else {
-            false
         }
+        return blockFound
     }
 
     fun removeAll() {

@@ -33,11 +33,4 @@ class FileManager private constructor(private val pluginFolder: File): ChestLoca
 
     override fun getChestLocationYml(): File = File("$pluginFolder/$CHEST_LOCATION_YML")
     override fun configFromYml(ymlFile: File): YamlConfiguration = YamlConfiguration.loadConfiguration(ymlFile)
-
-
-
-
-    fun save(yml: File, config: YamlConfiguration) {
-        config.save(yml)
-    }
 }
