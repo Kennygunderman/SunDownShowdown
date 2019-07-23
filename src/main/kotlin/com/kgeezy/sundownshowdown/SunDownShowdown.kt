@@ -15,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin
 const val DEFAULT_WORLD = "world"
 
 class SunDownShowdown : JavaPlugin() {
-
     private val chestGenerator: ChestGenerator by lazy {
         val itemGenerator = ItemGenerator()
         ChestGenerator(itemGenerator, FileManager.getInstance())
@@ -59,7 +58,7 @@ class SunDownShowdown : JavaPlugin() {
                         showdown.chestGenerator.restockChests()
                     }
 
-                    null -> sender.sendMessage("Usages: /showdown chest <add|restock>")
+                    null -> sender.sendMessage(StringRes.SHOWDOWN_CHEST_CMD_USAGE)
                 }
             }
 
@@ -67,10 +66,9 @@ class SunDownShowdown : JavaPlugin() {
                 showdown.startGame()
             }
 
-            null -> sender.sendMessage("Usages: /showdown <chest|start>")
+            null -> sender.sendMessage(StringRes.SHOWDOWN_CMD_USAGE)
         }
 
-
-        return false
+        return true
     }
 }
