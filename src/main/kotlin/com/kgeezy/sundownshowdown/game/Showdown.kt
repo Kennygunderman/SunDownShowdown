@@ -31,8 +31,18 @@ class Showdown(val server: Server, val scheduler: ShowdownScheduler, val chestGe
 
 
     fun startGame() {
+        strikeLighting()
         chestGenerator.restockChests()
         val chestLocs = chestGenerator.getChestLocations()
         mobSpawner.spawnMobs(chestLocs)
+    }
+
+    /**
+     * STRIKES LIGHTNING!!
+     */
+    private fun strikeLighting() {
+        chestGenerator.getChestLocations().forEach { loc ->
+            chestGenerator.world?.strikeLightningEffect(loc)
+        }
     }
 }
