@@ -30,9 +30,10 @@ class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileM
      * block isn't Air.
      *
      */
-    fun createChestAboveBlock(player: Player, block: Block) {
+    fun createChestAboveBlock(player: Player, block: Block): Boolean {
         if (block.type == Material.AIR) {
             player.sendMessage(StringRes.CANT_PLACE_CHEST_IN_AIR)
+            return false
         }
 
         world?.let { w ->
@@ -40,6 +41,8 @@ class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileM
             createChestAtBlock(chestBlock)
             saveChestLocation(chestBlock.location)
         }
+
+        return true
     }
 
     private fun createChestAtBlock(block: Block) {
