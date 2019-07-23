@@ -61,6 +61,19 @@ class SunDownShowdown : JavaPlugin() {
                         sender.sendMessage(StringRes.SHOWDOWN_CHESTS_RESTOCKED)
                     }
 
+                    CHEST_REMOVE_ARG -> {
+                        if (args.getOrNull(2) == CHEST_REMOVE_ALL_ARG) {
+                            chestGenerator.removeAll()
+                            sender.sendMessage("all chests removed!")
+                        } else {
+                            if (chestGenerator.removeChest((sender as Player).getTargetBlock(null, 200).location)) {
+                                sender.sendMessage("chest removed!")
+                            } else {
+                                sender.sendMessage("chest not found here!")
+                            }
+                        }
+                    }
+
                     null -> sender.sendMessage(StringRes.SHOWDOWN_CHEST_CMD_USAGE)
                 }
             }
