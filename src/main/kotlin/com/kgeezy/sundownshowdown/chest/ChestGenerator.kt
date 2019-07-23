@@ -112,21 +112,12 @@ class ChestGenerator(
     }
 
     /**
-     * Validate chests still exist in the world
-     */
-    fun validateChests() {
-        /**
-         * TODO: Add this logic
-         */
-    }
-
-    /**
      * Removes a chest
      */
     fun removeChest(location: Location): Boolean {
         val block = world?.getBlockAt(location)
         var blockFound = false
-        if (block is Chest) {
+        if (block?.state is Chest) {
             chestConfigSection?.getKeys(false)?.forEach { chestIndex ->
                 getXyzForChestIndex(chestIndex) { x, y, z ->
                     if (x == location.x && y == location.y && z == location.z) {
@@ -146,7 +137,7 @@ class ChestGenerator(
             world?.getBlockAt(loc)?.type = Material.AIR
         }
 
-        fileConfig.getConfigurationSection("${world?.name}")?.set("chest", null)
+        fileConfig.getConfigurationSection("${world?.name}")?.set("chests", null)
         fileConfig.save(yml)
     }
 }

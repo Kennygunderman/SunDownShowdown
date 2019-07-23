@@ -1,8 +1,8 @@
 name: SunDownShowdown
-main: com.kgeezy.sundownshowdown.SunDownShowdown
+main: com.kgeezy.sundownshowdown.SundownShowdown
 version: 1.0.0
 api-version: 1.13
 commands:
   showdown:
     usage: /<command> [chest | start | enable | disable] [add | remove | restock] [all]
-    description: Places a chest filled with loot.
+    description: Main showdown command.
