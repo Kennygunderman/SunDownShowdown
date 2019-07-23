@@ -16,6 +16,6 @@ object StringRes {
     val SHOWDOWN_DISABLE = PREFIX + ChatColor.GREEN + "You have " + ChatColor.BOLD + "DISABLED " + ChatColor.RESET + ChatColor.GREEN + "SunDown Showdown!"
 
     val CANT_PLACE_CHEST_IN_AIR = PREFIX + ChatColor.RED + "You cannot place a chest in mid air!"
-    val SHOWDOWN_CHEST_CMD_USAGE = PREFIX + ChatColor.RED + "Usages: /showdown chest <add | restock>"
-    val SHOWDOWN_CMD_USAGE = PREFIX + ChatColor.RED + "Usages: /showdown <chest | start>"
+    val SHOWDOWN_CHEST_CMD_USAGE = PREFIX + ChatColor.RED + "Usages: /showdown chest <add | restock | remove | remove all>"
+    val SHOWDOWN_CMD_USAGE = PREFIX + ChatColor.RED + "Usages: /showdown <chest | start | enable | disable>"
 }
