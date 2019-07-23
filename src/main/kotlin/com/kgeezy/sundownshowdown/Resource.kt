@@ -17,10 +17,10 @@ object StringRes {
     val SHOWDOWN_CHEST_REMOVE = PREFIX + ChatColor.GREEN + "Chest successfully removed!"
     val SHOWDOWN_CHEST_REMOVE_ALL = PREFIX + ChatColor.GREEN + "All chests have been removed from the Showdown!"
 
-
     val CANT_PLACE_CHEST_IN_AIR = PREFIX + ChatColor.RED + "You cannot place a chest in mid air!"
     val SHOWDOWN_CHEST_WORLD_ERROR = PREFIX + ChatColor.RED + "Showdown chests can only be placed in the main world!"
     val SHOWDOWN_CHEST_NOT_FOUND = PREFIX + ChatColor.GREEN + "unable to find a chest at this location!"
-    val SHOWDOWN_CHEST_CMD_USAGE = PREFIX + ChatColor.RED + "Usages: /showdown chest <add | restock | remove | remove all>"
-    val SHOWDOWN_CMD_USAGE = PREFIX + ChatColor.RED + "Usages: /showdown <chest | start | enable | disable>"
+
+    val SHOWDOWN_CHEST_CMD_USAGE = ChatColor.RED.toString() + "Usages: /showdown chest <add | restock | remove | remove all>"
+    val SHOWDOWN_CMD_USAGE = ChatColor.RED.toString() + "Usages: /showdown <chest | start | enable | disable>"
 }
