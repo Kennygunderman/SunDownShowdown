@@ -19,7 +19,11 @@ import java.util.*
 
 private const val CHEST_SIZE = 26
 
-class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileManager: ChestLocationFile, var world: World? = null) {
+class ChestGenerator(
+    private val itemGenerator: ItemGenerator,
+    private val fileManager: ChestLocationFile,
+    var world: World? = null
+) {
 
     private val rng by lazy {
         Random()
@@ -95,7 +99,7 @@ class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileM
             val z = chestSection.getConfigurationSection(chestIndex)?.get("z") as? Double
 
             if (x != null && y != null && z != null) {
-                val location = Location(world, x,y,z)
+                val location = Location(world, x, y, z)
                 locations.add(location)
             }
         }
@@ -124,9 +128,26 @@ class ChestGenerator(private val itemGenerator: ItemGenerator, private val fileM
     /**
      * Removes a chest
      */
-    fun removeChest() {
+    fun removeChest(location: Location): Boolean {
+        val block = world?.getBlockAt(location)
+        return if (block is Chest) {
+            block.setType(Material.AIR, false)
+            /**
+             * clear  from config
+             */
+            true
+        } else {
+            false
+        }
+    }
+
+    fun removeAll() {
+        getChestLocations().forEach { loc ->
+            world?.getBlockAt(loc)?.type = Material.AIR
+        }
+
         /**
-         * TODO: Add this logic
+         * clear config
          */
     }
 }
