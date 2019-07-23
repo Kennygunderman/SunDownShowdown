@@ -32,7 +32,7 @@ class SundownShowdown : JavaPlugin() {
         FileManager.initialize(dataFolder)
 
         /**
-         * start the showdown
+         * Enable the showdown
          */
         showdown.enable()
     }
@@ -89,7 +89,7 @@ class SundownShowdown : JavaPlugin() {
                 }
 
                 else -> usage?.let {
-                 sender.sendMessage(it)
+                    sender.sendMessage(it)
                 }
             }
         }
