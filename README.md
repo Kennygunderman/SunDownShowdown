@@ -3,8 +3,8 @@ Minecraft Spigot Plugin
 
 Sundown Showdown is an arena-based mini-game that happens every Minecraft day at sundown. When the game starts chests in the specified arena are stocked with valuable loot that is guarded by high-level mobs!
 
-## Set-Up
-To set up the plugin simply set up your arena using the arena commands below. Once the arena is set up add chests to the arena by using the chest commands below. Once this is done your good to go!
+## Set up
+To set up the arena make sure you are standing in the middle of the arena and set the radius using `\showdown arena set <radius>`. Once you have specified the arena radius, add chests within the arena by using `\showdown chest add`. By default, mobs will spawn around the chests when a new game starts. To add high-level mobs such as Ravager's and Pillager's use the command `/showdown mob add <mob type>`. Please reference the `Commands` section to understand how to properly use these commands. Enjoy the Plugin!
 
 ## Commands
 #### /showdown enable
@@ -51,3 +51,4 @@ Spawns all mobs at the arena chests.
 
 #### /showdown mob spawn all
 Spawns all mobs at defined points and chests in the arena.
+
