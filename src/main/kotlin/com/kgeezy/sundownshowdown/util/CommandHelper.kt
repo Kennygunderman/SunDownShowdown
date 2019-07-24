@@ -52,8 +52,13 @@ object CommandHelper {
             MOB_ARG -> {
                 when (args.getOrNull(1)) {
                     ADD_ARG -> {
-                        param = args.getOrNull(2)
-                        Command.MOB_ADD
+                        if (args.getOrNull(2) != null) {
+                            param = args.getOrNull(2)
+                            Command.MOB_ADD
+                        } else {
+                            usage = StringRes.SHOWDOWN_MOB_ADD_USAGE
+                            null
+                        }
                     }
 
                     REMOVE_ARG -> {
@@ -69,7 +74,7 @@ object CommandHelper {
                         when(args.getOrNull(2)) {
                             CHEST_ARG -> Command.MOB_SPAWN_CHESTS
                             ALL_ARG -> Command.MOB_SPAWN_ALL
-                            null -> Command.MOB_SPAWN
+                            MOB_SPAWN_POINTS_ARG -> Command.MOB_SPAWN_POINTS
                             else -> {
                                 usage = StringRes.SHOWDOWN_MOB_SPAWN_USAGE
                                 null

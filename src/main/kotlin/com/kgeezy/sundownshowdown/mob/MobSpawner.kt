@@ -11,7 +11,7 @@ import java.util.*
 private const val MOB_NAME_PILLAGER = "pillager"
 private const val MOB_NAME_RAVAGER = "ravager"
 
-class MobSpawner(private val world: World?, fileManager: MobFile) {
+class MobSpawner(val world: World?, fileManager: MobFile) {
 
     private val yml = fileManager.getMobYml()
     private val fileConfig = fileManager.configFromYml(yml)
@@ -44,10 +44,12 @@ class MobSpawner(private val world: World?, fileManager: MobFile) {
     /**
      * List of available mobs to add single spawn points for
      */
-    val availableMobs = listOf(
+    private val availableMobs = listOf(
         MOB_NAME_PILLAGER,
         MOB_NAME_RAVAGER
     )
+
+    fun isMobAvailable(mob: String): Boolean = availableMobs.contains(mob)
 
     fun spawnMob(location: Location, entityType: EntityType) {
         world?.spawnEntity(location, entityType)
@@ -85,8 +87,8 @@ class MobSpawner(private val world: World?, fileManager: MobFile) {
         return getMobEntityFromName(mobName)?.let { mob ->
             val size = mobConfigSection?.getKeys(false)?.size ?: 0
             fileConfig.set("${world?.name}.mobs.$size.x", location.x)
-            fileConfig.set("${world?.name}.mobs.$size.y", location.x)
-            fileConfig.set("${world?.name}.mobs.$size.z", location.x)
+            fileConfig.set("${world?.name}.mobs.$size.y", location.y)
+            fileConfig.set("${world?.name}.mobs.$size.z", location.z)
             fileConfig.set("${world?.name}.mobs.$size.type", mobName)
             fileConfig.save(yml)
             true

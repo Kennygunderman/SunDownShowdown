@@ -16,6 +16,7 @@ const val ARENA_CLEAR_ARG = "clear"
 
 const val MOB_ARG = "mob"
 const val MOB_SPAWN_ARG = "spawn"
+const val MOB_SPAWN_POINTS_ARG = "points"
 
 const val ADD_ARG = "add"
 const val REMOVE_ARG = "remove"
@@ -36,7 +37,7 @@ enum class Command {
     //haven't added
     MOB_ADD,
     MOB_REMOVE_ALL,
-    MOB_SPAWN,
+    MOB_SPAWN_POINTS,
     MOB_SPAWN_CHESTS,
     MOB_SPAWN_ALL
 }

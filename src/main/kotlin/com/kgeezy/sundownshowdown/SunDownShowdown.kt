@@ -18,7 +18,7 @@ const val DEFAULT_WORLD = "world"
 
 class SundownShowdown : JavaPlugin() {
     private val defaultWorld by lazy {
-       server.getWorld(DEFAULT_WORLD)
+        server.getWorld(DEFAULT_WORLD)
     }
 
     private val arena by lazy {
@@ -122,11 +122,15 @@ class SundownShowdown : JavaPlugin() {
 
                 MOB_ADD -> {
                     param?.let { p ->
-                        if (mobSpawner.availableMobs.contains(p)) {
+                        if (mobSpawner.isMobAvailable(p)) {
                             val loc = (sender as Player).getTargetBlock(null, 200).location.apply { y++ }
-                            if (!mobSpawner.saveMob(loc, p)) {
-                                sender.sendMessage(StringRes.SHOWDOWN_UNABLE_TO_ADD_MOB)
-                            }
+                            sender.sendMessage(
+                                if (mobSpawner.saveMob(loc, p)) {
+                                    String.format(StringRes.SHOWDOWN_MOB_SPAWN_ADDED, p)
+                                } else {
+                                    StringRes.SHOWDOWN_UNABLE_TO_ADD_MOB
+                                }
+                            )
                         } else {
                             sender.sendMessage(StringRes.SHOWDOWN_CANT_ADD_MOB_TYPE)
                         }
@@ -134,11 +138,11 @@ class SundownShowdown : JavaPlugin() {
                 }
 
                 MOB_REMOVE_ALL -> {
-                    showdown.mobSpawner.removeAllMobSpawns()
+                    mobSpawner.removeAllMobSpawns()
                     sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNS_REMOVED)
                 }
 
-                MOB_SPAWN -> {
+                MOB_SPAWN_POINTS -> {
                     showdown.mobSpawner.spawnMobsFromConfig()
                     sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED)
                 }
