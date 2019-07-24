@@ -40,7 +40,7 @@ class Showdown(
         strikeLighting()
         chestGenerator.restockChests()
         val chestLocs = chestGenerator.getChestLocations()
-        mobSpawner.spawnMobs(chestLocs)
+        mobSpawner.spawnRandomMobs(chestLocs)
     }
 
     fun clearMobs(): Int = arena.clearMobs()

@@ -6,6 +6,7 @@ import java.io.File
 private const val YML_EXT = ".yml"
 private const val CHEST_LOCATION_YML = "chest-location$YML_EXT"
 private const val ARENA_YML = "arena$YML_EXT"
+private const val MOB_YML = "mob$YML_EXT"
 
 interface FileConfig {
     fun configFromYml(ymlFile: File): YamlConfiguration
@@ -19,7 +20,11 @@ interface ArenaFile: FileConfig {
     fun getArenaYml(): File
 }
 
-class FileManager private constructor(private val pluginFolder: File): ChestLocationFile, ArenaFile {
+interface MobFile: FileConfig {
+    fun getMobYml(): File
+}
+
+class FileManager private constructor(private val pluginFolder: File): ChestLocationFile, ArenaFile, MobFile {
     companion object {
         private var instance: FileManager? = null
 
@@ -35,8 +40,9 @@ class FileManager private constructor(private val pluginFolder: File): ChestLoca
             }
         }
     }
-    override fun configFromYml(ymlFile: File): YamlConfiguration = YamlConfiguration.loadConfiguration(ymlFile)
 
     override fun getChestLocationYml(): File = File("$pluginFolder/$CHEST_LOCATION_YML")
     override fun getArenaYml(): File = File("$pluginFolder/$ARENA_YML")
+    override fun getMobYml(): File = File("$pluginFolder/$MOB_YML")
+    override fun configFromYml(ymlFile: File): YamlConfiguration = YamlConfiguration.loadConfiguration(ymlFile)
 }
