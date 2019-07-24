@@ -13,10 +13,10 @@ object CommandHelper {
         val cmd: Command? = when (args.firstOrNull()) {
             CHEST_ARG -> {
                 when (args.getOrNull(1)) {
-                    CHEST_ADD_ARG -> Command.CHEST_ADD
+                    ADD_ARG -> Command.CHEST_ADD
                     CHEST_RESTOCK_ARG -> Command.CHEST_RESTOCK
-                    CHEST_REMOVE_ARG -> {
-                        if (args.getOrNull(2) == CHEST_REMOVE_ALL_ARG) Command.CHEST_REMOVE_ALL
+                    REMOVE_ARG -> {
+                        if (args.getOrNull(2) == ALL_ARG) Command.CHEST_REMOVE_ALL
                         else Command.CHEST_REMOVE
                     }
                     else -> {
@@ -39,11 +39,46 @@ object CommandHelper {
                         }
                     }
 
-                    ARENA_REMOVE_ARG -> Command.ARENA_REMOVE
+                    REMOVE_ARG -> Command.ARENA_REMOVE
                     ARENA_CLEAR_ARG -> Command.ARENA_CLEAR
 
                     else -> {
                         usage = StringRes.SHOWDOWN_ARENA_USAGE
+                        null
+                    }
+                }
+            }
+
+            MOB_ARG -> {
+                when (args.getOrNull(1)) {
+                    ADD_ARG -> {
+                        param = args.getOrNull(2)
+                        Command.MOB_ADD
+                    }
+
+                    REMOVE_ARG -> {
+                        if (args.getOrNull(2) == ALL_ARG) {
+                            Command.MOB_REMOVE_ALL
+                        } else {
+                            usage = StringRes.SHOWDOWN_MOB_REMOVE_USAGE
+                            null
+                        }
+                    }
+
+                    MOB_SPAWN_ARG -> {
+                        when(args.getOrNull(2)) {
+                            CHEST_ARG -> Command.MOB_SPAWN_CHESTS
+                            ALL_ARG -> Command.MOB_SPAWN_ALL
+                            null -> Command.MOB_SPAWN
+                            else -> {
+                                usage = StringRes.SHOWDOWN_MOB_SPAWN_USAGE
+                                null
+                            }
+                        }
+                    }
+
+                    else -> {
+                        usage = StringRes.SHOWDOWN_MOB_USAGE
                         null
                     }
                 }

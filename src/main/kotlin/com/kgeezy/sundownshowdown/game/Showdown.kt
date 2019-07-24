@@ -11,7 +11,7 @@ class Showdown(
     private val server: Server,
     private val arena: Arena,
     val chestGenerator: ChestGenerator,
-    private val mobSpawner: MobSpawner,
+    val mobSpawner: MobSpawner,
     private val scheduler: ShowdownScheduler
 ) {
 
@@ -39,6 +39,21 @@ class Showdown(
         clearMobs()
         strikeLighting()
         chestGenerator.restockChests()
+        spawnAllMobs()
+    }
+
+    /**
+     * Spawns all mobs at chests and at defined locations from config
+     */
+    fun spawnAllMobs() {
+        spawnMobsAtChests()
+        mobSpawner.spawnMobsFromConfig()
+    }
+
+    /**
+     * Spawns mobs at chest locations
+     */
+    fun spawnMobsAtChests() {
         val chestLocs = chestGenerator.getChestLocations()
         mobSpawner.spawnRandomMobs(chestLocs)
     }

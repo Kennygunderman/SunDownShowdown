@@ -12,12 +12,6 @@ private const val MOB_NAME_PILLAGER = "pillager"
 private const val MOB_NAME_RAVAGER = "ravager"
 
 class MobSpawner(private val world: World?, fileManager: MobFile) {
-    companion object {
-        val availableMobs = listOf(
-            MOB_NAME_PILLAGER,
-            MOB_NAME_RAVAGER
-        )
-    }
 
     private val yml = fileManager.getMobYml()
     private val fileConfig = fileManager.configFromYml(yml)
@@ -45,6 +39,14 @@ class MobSpawner(private val world: World?, fileManager: MobFile) {
         EntityType.ZOMBIE,
         EntityType.SKELETON,
         EntityType.SPIDER
+    )
+
+    /**
+     * List of available mobs to add single spawn points for
+     */
+    val availableMobs = listOf(
+        MOB_NAME_PILLAGER,
+        MOB_NAME_RAVAGER
     )
 
     fun spawnMob(location: Location, entityType: EntityType) {
@@ -124,6 +126,11 @@ class MobSpawner(private val world: World?, fileManager: MobFile) {
                 spawnMob(mobLoc.location, entity)
             }
         }
+    }
+
+    fun removeAllMobSpawns() {
+        fileConfig.getConfigurationSection("${world?.name}")?.set("mobs", null)
+        fileConfig.save(yml)
     }
 
     internal class MobLocation(val location: Location, mobName: String) {

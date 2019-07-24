@@ -29,8 +29,11 @@ class SundownShowdown : JavaPlugin() {
         ChestGenerator(ItemGenerator(), FileManager.getInstance(), defaultWorld)
     }
 
+    private val mobSpawner by lazy {
+        MobSpawner(defaultWorld, FileManager.getInstance())
+    }
+
     private val showdown: Showdown by lazy {
-        val mobSpawner = MobSpawner(defaultWorld)
         val scheduler = ShowdownScheduler(this)
         Showdown(server, arena, chestGenerator, mobSpawner, scheduler)
     }
@@ -115,6 +118,39 @@ class SundownShowdown : JavaPlugin() {
 
                 ARENA_CLEAR -> {
                     sender.sendMessage(String.format(StringRes.SHOWDOWN_ARENA_CLEARED, showdown.clearMobs()))
+                }
+
+                MOB_ADD -> {
+                    param?.let { p ->
+                        if (mobSpawner.availableMobs.contains(p)) {
+                            val loc = (sender as Player).getTargetBlock(null, 200).location.apply { y++ }
+                            if (!mobSpawner.saveMob(loc, p)) {
+                                sender.sendMessage(StringRes.SHOWDOWN_UNABLE_TO_ADD_MOB)
+                            }
+                        } else {
+                            sender.sendMessage(StringRes.SHOWDOWN_CANT_ADD_MOB_TYPE)
+                        }
+                    }
+                }
+
+                MOB_REMOVE_ALL -> {
+                    showdown.mobSpawner.removeAllMobSpawns()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNS_REMOVED)
+                }
+
+                MOB_SPAWN -> {
+                    showdown.mobSpawner.spawnMobsFromConfig()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED)
+                }
+
+                MOB_SPAWN_CHESTS -> {
+                    showdown.spawnMobsAtChests()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED_CHESTS)
+                }
+
+                MOB_SPAWN_ALL -> {
+                    showdown.spawnAllMobs()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED_ALL)
                 }
 
                 else -> usage?.let {
