@@ -4,7 +4,7 @@ Minecraft Spigot Plugin
 Sundown Showdown is an arena-based mini-game that happens every Minecraft day at sundown. When the game starts chests in the specified arena are stocked with valuable loot that is guarded by high-level mobs!
 
 ## Set-Up
-To set up the plugin simply add chests to your arena using the commands below, and make sure the plugin is enabled.
+To set up the plugin simply set up your arena using the arena commands below. Once the arena is set up add chests to the arena by using the chest commands below. Once this is done your good to go!
 
 ## Commands
 #### /showdown enable
