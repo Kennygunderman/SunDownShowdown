@@ -16,6 +16,15 @@ Disables the Showdown for happening at sundown.
 #### /showdown start
 Force starts the Showdown.
 
+#### /showdown arena set radius <radius>
+Sets the box radius of the arena from where the player is standing.
+
+#### /showdown arena remove
+Removes the current saved arena from the configuration.
+
+#### /showdown arena clear
+Clears hostile mobs from the arena.
+
 #### /showdown chest add
 Adds a chest to the arena. The chest added will be above the current block that the player is looking at.
 
@@ -28,11 +37,17 @@ Removes all chests from the arena.
 #### /showdown chest restock
 Restocks all chests in the arena forcefully.
 
-#### /showdown arena set radius <radius>
-Sets the box radius of the arena from where the player is standing.
+#### /showdown mob add <mob type>
+Add's a mob spawn point for the type of mob that was specified. currently, the available types are `pillager` & `ravager`.
 
-#### /showdown arena remove
-Removes the current saved arena from the configuration.
+#### /showdown mob remove all
+Remove's all defined mob spawn locations from the arena.
 
-#### /showdown arena clear
-Clears hostile mobs from the arena.
+#### /showdown mob spawn points
+Spawns all mobs at the defined points.
+
+#### /showdown mob spawn chests
+Spawns all mobs at the arena chests.
+
+#### /showdown mob spawn all
+Spawns all mobs at defined points and chests.

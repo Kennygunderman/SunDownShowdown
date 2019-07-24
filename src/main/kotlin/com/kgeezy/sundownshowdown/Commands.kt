@@ -17,6 +17,8 @@ const val ARENA_CLEAR_ARG = "clear"
 const val MOB_ARG = "mob"
 const val MOB_SPAWN_ARG = "spawn"
 const val MOB_SPAWN_POINTS_ARG = "points"
+const val MOB_SPAWN_CHESTS_ARG = "chests"
+
 
 const val ADD_ARG = "add"
 const val REMOVE_ARG = "remove"

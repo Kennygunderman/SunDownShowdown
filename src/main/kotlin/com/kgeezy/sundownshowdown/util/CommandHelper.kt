@@ -72,7 +72,7 @@ object CommandHelper {
 
                     MOB_SPAWN_ARG -> {
                         when(args.getOrNull(2)) {
-                            CHEST_ARG -> Command.MOB_SPAWN_CHESTS
+                            MOB_SPAWN_CHESTS_ARG -> Command.MOB_SPAWN_CHESTS
                             ALL_ARG -> Command.MOB_SPAWN_ALL
                             MOB_SPAWN_POINTS_ARG -> Command.MOB_SPAWN_POINTS
                             else -> {
