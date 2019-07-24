@@ -38,7 +38,7 @@ Removes all chests from the arena.
 Restocks all chests in the arena forcefully.
 
 #### /showdown mob add <mob type>
-Adds a mob spawn point for the type of mob that was specified. currently, the available types are `pillager` & `ravager`.
+Adds a mob spawn point at the location that the player is looking at. Currently, the available mob types to spawn are `pillager` & `ravager`.
 
 #### /showdown mob remove all
 Removes all defined mob spawn locations from the arena.
