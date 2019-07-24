@@ -16,11 +16,16 @@ object StringRes {
     val SHOWDOWN_DISABLE = PREFIX + ChatColor.GREEN + "You have " + ChatColor.BOLD + "DISABLED " + ChatColor.RESET + ChatColor.GREEN + "Sundown Showdown!"
     val SHOWDOWN_CHEST_REMOVE = PREFIX + ChatColor.GREEN + "Chest successfully removed!"
     val SHOWDOWN_CHEST_REMOVE_ALL = PREFIX + ChatColor.GREEN + "All chests have been removed from the Showdown!"
+    val SHOWDOWN_ARENA_CREATED = PREFIX + ChatColor.GREEN + "Arena radius set successfully!"
+    val SHOWDOWN_ARENA_REMOVED = PREFIX + ChatColor.GREEN + "Arena removed!"
+    val SHOWDOWN_ARENA_CLEARED = PREFIX + ChatColor.GREEN + "%1\$s mobs cleared from the arena!"
 
     val CANT_PLACE_CHEST_IN_AIR = PREFIX + ChatColor.RED + "You cannot place a chest in mid air!"
     val SHOWDOWN_CHEST_WORLD_ERROR = PREFIX + ChatColor.RED + "Showdown chests can only be placed in the main world!"
-    val SHOWDOWN_CHEST_NOT_FOUND = PREFIX + ChatColor.GREEN + "unable to find a chest at this location!"
+    val SHOWDOWN_CHEST_NOT_FOUND = PREFIX + ChatColor.RED + "unable to find a chest at this location!"
 
+    val SHOWDOWN_CMD_USAGE = ChatColor.RED.toString() + "Usages: /showdown <chest | arena | start | enable | disable>"
     val SHOWDOWN_CHEST_CMD_USAGE = ChatColor.RED.toString() + "Usages: /showdown chest <add | restock | remove | remove all>"
-    val SHOWDOWN_CMD_USAGE = ChatColor.RED.toString() + "Usages: /showdown <chest | start | enable | disable>"
+    val SHOWDOWN_ARENA_USAGE = ChatColor.RED.toString() + "Usages: /showdown arena <set | clear | remove>"
+    val SHOWDOWN_ARENA_SET_USAGE = ChatColor.RED.toString() + "Usages: /showdown arena set radius <radius>"
 }

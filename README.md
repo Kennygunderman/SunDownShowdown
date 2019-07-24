@@ -27,3 +27,12 @@ Removes all chests from the arena.
 
 #### /showdown chest restock
 Restocks all chests in the arena forcefully.
+
+#### /showdown arena set radius <radius>
+Sets the box radius of the arena from where the player is standing.
+
+#### /showdown arena remove
+Removes the current saved arena from the configuration.
+
+#### /showdown arena clear
+Clears hostile mobs from the arena.
