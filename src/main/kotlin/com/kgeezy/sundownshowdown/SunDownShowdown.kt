@@ -18,7 +18,7 @@ const val DEFAULT_WORLD = "world"
 
 class SundownShowdown : JavaPlugin() {
     private val defaultWorld by lazy {
-       server.getWorld(DEFAULT_WORLD)
+        server.getWorld(DEFAULT_WORLD)
     }
 
     private val arena by lazy {
@@ -29,8 +29,11 @@ class SundownShowdown : JavaPlugin() {
         ChestGenerator(ItemGenerator(), FileManager.getInstance(), defaultWorld)
     }
 
+    private val mobSpawner by lazy {
+        MobSpawner(defaultWorld, FileManager.getInstance())
+    }
+
     private val showdown: Showdown by lazy {
-        val mobSpawner = MobSpawner(defaultWorld)
         val scheduler = ShowdownScheduler(this)
         Showdown(server, arena, chestGenerator, mobSpawner, scheduler)
     }
@@ -115,6 +118,43 @@ class SundownShowdown : JavaPlugin() {
 
                 ARENA_CLEAR -> {
                     sender.sendMessage(String.format(StringRes.SHOWDOWN_ARENA_CLEARED, showdown.clearMobs()))
+                }
+
+                MOB_ADD -> {
+                    param?.let { p ->
+                        if (mobSpawner.isMobAvailable(p)) {
+                            val loc = (sender as Player).getTargetBlock(null, 200).location.apply { y++ }
+                            sender.sendMessage(
+                                if (mobSpawner.saveMob(loc, p)) {
+                                    String.format(StringRes.SHOWDOWN_MOB_SPAWN_ADDED, p)
+                                } else {
+                                    StringRes.SHOWDOWN_UNABLE_TO_ADD_MOB
+                                }
+                            )
+                        } else {
+                            sender.sendMessage(StringRes.SHOWDOWN_CANT_ADD_MOB_TYPE)
+                        }
+                    }
+                }
+
+                MOB_REMOVE_ALL -> {
+                    mobSpawner.removeAllMobSpawns()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNS_REMOVED)
+                }
+
+                MOB_SPAWN_POINTS -> {
+                    showdown.mobSpawner.spawnMobsFromConfig()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED)
+                }
+
+                MOB_SPAWN_CHESTS -> {
+                    showdown.spawnMobsAtChests()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED_CHESTS)
+                }
+
+                MOB_SPAWN_ALL -> {
+                    showdown.spawnAllMobs()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED_ALL)
                 }
 
                 else -> usage?.let {
