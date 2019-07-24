@@ -5,23 +5,23 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.*
 
-class Arena(private val world: World, fileManager: ArenaFile) {
+class Arena(private val world: World?, fileManager: ArenaFile) {
     private val yml = fileManager.getArenaYml()
     private val fileConfig = fileManager.configFromYml(yml)
 
     fun setArena(location: Location, radius: Double) {
-        fileConfig.set("${world.name}.arena.x", location.x)
-        fileConfig.set("${world.name}.arena.y", location.y)
-        fileConfig.set("${world.name}.arena.z", location.z)
-        fileConfig.set("${world.name}.radius", radius)
+        fileConfig.set("${world?.name}.arena.x", location.x)
+        fileConfig.set("${world?.name}.arena.y", location.y)
+        fileConfig.set("${world?.name}.arena.z", location.z)
+        fileConfig.set("${world?.name}.radius", radius)
         fileConfig.save(yml)
     }
 
     private fun arenaLocationFromConfig(callback: (location: Location, radius: Double) -> Unit) {
-        val x = fileConfig.get("${world.name}.arena.x") as? Double
-        val y = fileConfig.get("${world.name}.arena.y") as? Double
-        val z = fileConfig.get("${world.name}.arena.z") as? Double
-        val radius = fileConfig.get("${world.name}.radius") as? Double
+        val x = fileConfig.get("${world?.name}.arena.x") as? Double
+        val y = fileConfig.get("${world?.name}.arena.y") as? Double
+        val z = fileConfig.get("${world?.name}.arena.z") as? Double
+        val radius = fileConfig.get("${world?.name}.radius") as? Double
 
         if (x != null && y != null && z != null && radius != null) {
             callback(Location(world, x, y, z), radius)
@@ -31,23 +31,25 @@ class Arena(private val world: World, fileManager: ArenaFile) {
     fun clearMobs(): Int {
         var numOfMobs = 0
         arenaLocationFromConfig { location, radius ->
-            val entities = world.getNearbyEntities(location, radius, radius, radius)
-            numOfMobs = entities.size
-            val iter = entities.iterator()
-            while (iter.hasNext()) {
-                val entity = iter.next()
-                when (entity.type) {
-                    EntityType.CREEPER,
-                    EntityType.ZOMBIE,
-                    EntityType.SKELETON,
-                    EntityType.SPIDER,
-                    EntityType.CAVE_SPIDER,
-                    EntityType.EVOKER,
-                    EntityType.RAVAGER,
-                    EntityType.PILLAGER -> {
-                        entity.remove()
+            world?.let { w ->
+                val entities = w.getNearbyEntities(location, radius, radius, radius)
+                numOfMobs = entities.size
+                val iter = entities.iterator()
+                while (iter.hasNext()) {
+                    val entity = iter.next()
+                    when (entity?.type) {
+                        EntityType.CREEPER,
+                        EntityType.ZOMBIE,
+                        EntityType.SKELETON,
+                        EntityType.SPIDER,
+                        EntityType.CAVE_SPIDER,
+                        EntityType.EVOKER,
+                        EntityType.RAVAGER,
+                        EntityType.PILLAGER -> {
+                            entity.remove()
+                        }
+                        else -> {}
                     }
-                    else -> {}
                 }
             }
         }
@@ -55,7 +57,7 @@ class Arena(private val world: World, fileManager: ArenaFile) {
     }
 
     fun removeArena() {
-        fileConfig.set(world.name, null)
+        fileConfig.set("${world?.name}", null)
         fileConfig.save(yml)
     }
 }

@@ -17,19 +17,24 @@ import org.bukkit.plugin.java.JavaPlugin
 const val DEFAULT_WORLD = "world"
 
 class SundownShowdown : JavaPlugin() {
-    private val showdown: Showdown by lazy {
-        val defaultWorld = server.getWorld(DEFAULT_WORLD)
-        val chestGenerator = ChestGenerator(ItemGenerator(), FileManager.getInstance(), defaultWorld)
-        val mobSpawner = MobSpawner(defaultWorld)
-        val scheduler = ShowdownScheduler(this)
-        Showdown(server, scheduler, chestGenerator, mobSpawner)
+    private val defaultWorld by lazy {
+       server.getWorld(DEFAULT_WORLD)
     }
-
 
     private val arena by lazy {
-        //todo: dont double bang
-        Arena(server.getWorld(DEFAULT_WORLD)!!, FileManager.getInstance())
+        Arena(defaultWorld, FileManager.getInstance())
     }
+
+    private val chestGenerator by lazy {
+        ChestGenerator(ItemGenerator(), FileManager.getInstance(), defaultWorld)
+    }
+
+    private val showdown: Showdown by lazy {
+        val mobSpawner = MobSpawner(defaultWorld)
+        val scheduler = ShowdownScheduler(this)
+        Showdown(server, arena, chestGenerator, mobSpawner, scheduler)
+    }
+
     override fun onEnable() {
         super.onEnable()
         /**
@@ -56,7 +61,7 @@ class SundownShowdown : JavaPlugin() {
                         return@command
                     }
 
-                    if (showdown.chestGenerator.createChestAboveBlock(sender, sender.getTargetBlock(null, 200))) {
+                    if (chestGenerator.createChestAboveBlock(sender, sender.getTargetBlock(null, 200))) {
                         sender.sendMessage(StringRes.SHOWDOWN_CHEST_ADDED)
                     }
                 }
@@ -67,7 +72,7 @@ class SundownShowdown : JavaPlugin() {
                 }
 
                 CHEST_REMOVE -> {
-                    if (showdown.chestGenerator.removeChest((sender as Player).getTargetBlock(null, 200).location)) {
+                    if (chestGenerator.removeChest((sender as Player).getTargetBlock(null, 200).location)) {
                         sender.sendMessage(StringRes.SHOWDOWN_CHEST_REMOVE)
                     } else {
                         sender.sendMessage(StringRes.SHOWDOWN_CHEST_NOT_FOUND)
@@ -75,7 +80,7 @@ class SundownShowdown : JavaPlugin() {
                 }
 
                 CHEST_REMOVE_ALL -> {
-                    showdown.chestGenerator.removeAll()
+                    chestGenerator.removeAll()
                     sender.sendMessage(StringRes.SHOWDOWN_CHEST_REMOVE_ALL)
                 }
 
@@ -109,7 +114,7 @@ class SundownShowdown : JavaPlugin() {
                 }
 
                 ARENA_CLEAR -> {
-                    sender.sendMessage(String.format(StringRes.SHOWDOWN_ARENA_CLEARED, arena.clearMobs()))
+                    sender.sendMessage(String.format(StringRes.SHOWDOWN_ARENA_CLEARED, showdown.clearMobs()))
                 }
 
                 else -> usage?.let {
