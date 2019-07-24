@@ -7,8 +7,9 @@ object CommandHelper {
     /**
      * Method to parse through args and return the corresponding command
      */
-    fun command(args: Array<out String>, callback: (cmd: Command?, msg: String?) -> Unit) {
+    fun command(args: Array<out String>, callback: (cmd: Command?, msg: String?, param: String?) -> Unit) {
         var usage: String? = null
+        var param: String? = null
         val cmd: Command? = when (args.firstOrNull()) {
             CHEST_ARG -> {
                 when (args.getOrNull(1)) {
@@ -24,6 +25,30 @@ object CommandHelper {
                     }
                 }
             }
+
+            ARENA_ARG -> {
+                when (args.getOrNull(1)) {
+                    ARENA_SET_ARG -> {
+                        if (args.getOrNull(2) == ARENA_SET_RADIUS_ARG
+                            && args.getOrNull(3) != null) {
+                            param = args.getOrNull(3)
+                            Command.ARENA_SET
+                        } else {
+                            usage = StringRes.SHOWDOWN_ARENA_SET_USAGE
+                            null
+                        }
+                    }
+
+                    ARENA_REMOVE_ARG -> Command.ARENA_REMOVE
+                    ARENA_CLEAR_ARG -> Command.ARENA_CLEAR
+
+                    else -> {
+                        usage = StringRes.SHOWDOWN_ARENA_USAGE
+                        null
+                    }
+                }
+            }
+
             START_ARG -> Command.START
             ENABLE_ARG -> Command.ENABLE
             DISABLE_ARG -> Command.DISABLE
@@ -32,6 +57,6 @@ object CommandHelper {
                 null
             }
         }
-        callback.invoke(cmd, usage)
+        callback.invoke(cmd, usage, param)
     }
 }

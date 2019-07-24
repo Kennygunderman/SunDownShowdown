@@ -3,6 +3,7 @@ package com.kgeezy.sundownshowdown
 import com.kgeezy.sundownshowdown.Command.*
 import com.kgeezy.sundownshowdown.chest.ChestGenerator
 import com.kgeezy.sundownshowdown.chest.ItemGenerator
+import com.kgeezy.sundownshowdown.game.Arena
 import com.kgeezy.sundownshowdown.game.Showdown
 import com.kgeezy.sundownshowdown.mob.MobSpawner
 import com.kgeezy.sundownshowdown.scheduler.ShowdownScheduler
@@ -24,6 +25,11 @@ class SundownShowdown : JavaPlugin() {
         Showdown(server, scheduler, chestGenerator, mobSpawner)
     }
 
+
+    private val arena by lazy {
+        //todo: dont double bang
+        Arena(server.getWorld(DEFAULT_WORLD)!!, FileManager.getInstance())
+    }
     override fun onEnable() {
         super.onEnable()
         /**
@@ -42,7 +48,7 @@ class SundownShowdown : JavaPlugin() {
             return true
         }
 
-        CommandHelper.command(args) { cmd, usage ->
+        CommandHelper.command(args) { cmd, usage, param ->
             when (cmd) {
                 CHEST_ADD -> {
                     if ((sender as Player).world != server.getWorld(DEFAULT_WORLD)) {
@@ -86,6 +92,24 @@ class SundownShowdown : JavaPlugin() {
                 DISABLE -> {
                     showdown.disable()
                     sender.sendMessage(StringRes.SHOWDOWN_DISABLE)
+                }
+
+                ARENA_SET -> {
+                    param?.toDoubleOrNull()?.let { radius ->
+                        arena.setArena((sender as Player).location, radius)
+                        sender.sendMessage(StringRes.SHOWDOWN_ARENA_CREATED)
+                        return@command
+                    }
+                    sender.sendMessage(StringRes.SHOWDOWN_ARENA_USAGE)
+                }
+
+                ARENA_REMOVE -> {
+                    arena.removeArena()
+                    sender.sendMessage(StringRes.SHOWDOWN_ARENA_REMOVED)
+                }
+
+                ARENA_CLEAR -> {
+                    sender.sendMessage(String.format(StringRes.SHOWDOWN_ARENA_CLEARED, arena.clearMobs()))
                 }
 
                 else -> usage?.let {

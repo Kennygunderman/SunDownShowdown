@@ -3,19 +3,9 @@ package com.kgeezy.sundownshowdown.game
 import com.kgeezy.sundownshowdown.util.ArenaFile
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.entity.Monster
+import org.bukkit.entity.*
 
-/***
- * note: file structure
- *  world:
- *   center:
- *    x: 0
- *    y: 0
- *    z: 0
- *   radius: 50.0
- *
- */
-class Arena(val world: World, fileManager: ArenaFile) {
+class Arena(private val world: World, fileManager: ArenaFile) {
     private val yml = fileManager.getArenaYml()
     private val fileConfig = fileManager.configFromYml(yml)
 
@@ -34,22 +24,38 @@ class Arena(val world: World, fileManager: ArenaFile) {
         val radius = fileConfig.get("${world.name}.radius") as? Double
 
         if (x != null && y != null && z != null && radius != null) {
-            callback(Location(world, x,y,z), radius)
+            callback(Location(world, x, y, z), radius)
         }
     }
 
-    fun clearMobs() {
+    fun clearMobs(): Int {
+        var numOfMobs = 0
         arenaLocationFromConfig { location, radius ->
             val entities = world.getNearbyEntities(location, radius, radius, radius)
-            entities.forEach { entity ->
-                if (entity.type is Monster) {
-                    entity.remove()
+            numOfMobs = entities.size
+            val iter = entities.iterator()
+            while (iter.hasNext()) {
+                val entity = iter.next()
+                when (entity.type) {
+                    EntityType.CREEPER,
+                    EntityType.ZOMBIE,
+                    EntityType.SKELETON,
+                    EntityType.SPIDER,
+                    EntityType.CAVE_SPIDER,
+                    EntityType.EVOKER,
+                    EntityType.RAVAGER,
+                    EntityType.PILLAGER -> {
+                        entity.remove()
+                    }
+                    else -> {}
                 }
             }
         }
+        return numOfMobs
     }
 
     fun removeArena() {
-        fileConfig.getConfigurationSection(world.name)?.set("arena", null)
+        fileConfig.set(world.name, null)
+        fileConfig.save(yml)
     }
 }
