@@ -36,6 +36,7 @@ class Showdown(
     }
 
     fun startGame() {
+        clearMobs()
         strikeLighting()
         chestGenerator.restockChests()
         val chestLocs = chestGenerator.getChestLocations()
