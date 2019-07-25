@@ -61,13 +61,13 @@ class ChestGenerator(
         }
 
         val chest = block.state as Chest
-        generateChestContents { chestIndex, item ->
-            chest.inventory.setItem(chestIndex, item)
+        generateChestContents { inventoryIndex, item ->
+            chest.inventory.setItem(inventoryIndex, item)
         }
     }
 
-    private fun generateChestContents(callback: (chestIndex: Int, item: ItemStack) -> Unit) {
-        val rolls = rng.int(2, 7)
+    private fun generateChestContents(callback: (inventoryIndex: Int, item: ItemStack) -> Unit) {
+        val rolls = rng.int(2, 5)
 
         for (i in 0 until rolls) {
             val index = rng.nextInt(CHEST_SIZE)
@@ -77,18 +77,18 @@ class ChestGenerator(
 
 
     private fun saveChestLocation(location: Location) {
-        val size = chestConfigSection?.getKeys(false)?.size ?: 0
+        val uid = UUID.randomUUID().toString()
         world?.name.let { worldName ->
-            fileConfig.set("$worldName.chests.$size.x", location.x)
-            fileConfig.set("$worldName.chests.$size.y", location.y)
-            fileConfig.set("$worldName.chests.$size.z", location.z)
+            fileConfig.set("$worldName.chests.$uid.x", location.x)
+            fileConfig.set("$worldName.chests.$uid.y", location.y)
+            fileConfig.set("$worldName.chests.$uid.z", location.z)
             fileConfig.save(yml)
         }
     }
 
     fun getChestLocations(): List<Location> = mutableListOf<Location>().apply {
-        chestConfigSection?.getKeys(false)?.forEach { chestIndex ->
-            getXyzForChestIndex(chestIndex) { x, y, z ->
+        chestConfigSection?.getKeys(false)?.forEach { chestId ->
+            getXyzForChestId(chestId) { x, y, z ->
                 if (x != null && y != null && z != null) {
                     val location = Location(world, x, y, z)
                     add(location)
@@ -97,10 +97,10 @@ class ChestGenerator(
         }
     }
 
-    private fun getXyzForChestIndex(chestIndex: String, callback: (x: Double?, y: Double?, z: Double?) -> Unit) {
-        val x = chestConfigSection?.getConfigurationSection(chestIndex)?.get("x") as? Double
-        val y = chestConfigSection?.getConfigurationSection(chestIndex)?.get("y") as? Double
-        val z = chestConfigSection?.getConfigurationSection(chestIndex)?.get("z") as? Double
+    private fun getXyzForChestId(id: String, callback: (x: Double?, y: Double?, z: Double?) -> Unit) {
+        val x = chestConfigSection?.getConfigurationSection(id)?.get("x") as? Double
+        val y = chestConfigSection?.getConfigurationSection(id)?.get("y") as? Double
+        val z = chestConfigSection?.getConfigurationSection(id)?.get("z") as? Double
         callback.invoke(x, y, z)
     }
 
@@ -120,12 +120,12 @@ class ChestGenerator(
         val block = world?.getBlockAt(location)
         var blockFound = false
         if (block?.state is Chest) {
-            chestConfigSection?.getKeys(false)?.forEach { chestIndex ->
-                getXyzForChestIndex(chestIndex) { x, y, z ->
+            chestConfigSection?.getKeys(false)?.forEach { chestId ->
+                getXyzForChestId(chestId) { x, y, z ->
                     if (x == location.x && y == location.y && z == location.z) {
                         blockFound = true
                         block.setType(Material.AIR, false)
-                        chestConfigSection?.set(chestIndex, null)
+                        chestConfigSection?.set(chestId, null)
                         fileConfig.save(yml)
                     }
                 }
