@@ -56,7 +56,9 @@ class ChestGenerator(
     }
 
     private fun createChestAtBlock(block: Block) {
-        block.type = Material.CHEST
+        if (block.type != Material.CHEST) {
+            block.type = Material.CHEST
+        }
 
         val chest = block.state as Chest
         generateChestContents { chestIndex, item ->
@@ -65,7 +67,7 @@ class ChestGenerator(
     }
 
     private fun generateChestContents(callback: (chestIndex: Int, item: ItemStack) -> Unit) {
-        val rolls = rng.int(2, 5)
+        val rolls = rng.int(2, 7)
 
         for (i in 0 until rolls) {
             val index = rng.nextInt(CHEST_SIZE)

@@ -45,10 +45,15 @@ class Arena(private val world: World?, fileManager: ArenaFile) {
                         EntityType.CAVE_SPIDER,
                         EntityType.EVOKER,
                         EntityType.RAVAGER,
-                        EntityType.PILLAGER -> {
+                        EntityType.PILLAGER,
+                        EntityType.WITCH,
+                        EntityType.SLIME,
+                        EntityType.PHANTOM,
+                        EntityType.BLAZE,
+                        EntityType.WITHER_SKELETON -> {
                             entity.remove()
                         }
-                        else -> {}
+                        else -> { }
                     }
                 }
             }

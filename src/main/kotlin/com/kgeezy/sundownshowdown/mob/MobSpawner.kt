@@ -38,7 +38,11 @@ class MobSpawner(val world: World?, fileManager: MobFile) {
     private val mobs = listOf(
         EntityType.ZOMBIE,
         EntityType.SKELETON,
-        EntityType.SPIDER
+        EntityType.SPIDER,
+        EntityType.SLIME,
+        EntityType.PHANTOM,
+        EntityType.WITCH,
+        EntityType.WITHER_SKELETON
     )
 
     /**
