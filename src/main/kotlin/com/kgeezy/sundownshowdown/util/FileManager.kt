@@ -6,7 +6,7 @@ import java.io.File
 private const val YML_EXT = ".yml"
 private const val CHEST_LOCATION_YML = "chest-location$YML_EXT"
 private const val ARENA_YML = "arena$YML_EXT"
-private const val MOB_YML = "mob$YML_EXT"
+private const val MOB_YML = "mob-locations$YML_EXT"
 
 interface FileConfig {
     fun configFromYml(ymlFile: File): YamlConfiguration
