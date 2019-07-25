@@ -85,11 +85,11 @@ class MobSpawner(val world: World?, fileManager: MobFile) {
      */
     fun saveMob(location: Location, mobName: String): Boolean {
         return getMobEntityFromName(mobName)?.let { mob ->
-            val size = mobConfigSection?.getKeys(false)?.size ?: 0
-            fileConfig.set("${world?.name}.mobs.$size.x", location.x)
-            fileConfig.set("${world?.name}.mobs.$size.y", location.y)
-            fileConfig.set("${world?.name}.mobs.$size.z", location.z)
-            fileConfig.set("${world?.name}.mobs.$size.type", mobName)
+            val uid = UUID.randomUUID().toString()
+            fileConfig.set("${world?.name}.mobs.$uid.x", location.x)
+            fileConfig.set("${world?.name}.mobs.$uid.y", location.y)
+            fileConfig.set("${world?.name}.mobs.$uid.z", location.z)
+            fileConfig.set("${world?.name}.mobs.$uid.type", mobName)
             fileConfig.save(yml)
             true
         } ?: false
@@ -101,11 +101,11 @@ class MobSpawner(val world: World?, fileManager: MobFile) {
                 .getConfigurationSection("${world?.name}")
                 ?.getConfigurationSection("mobs")
 
-            mobConfigSection?.getKeys(false)?.forEach { mobIndex ->
-                val x = mobConfigSection.getConfigurationSection(mobIndex)?.get("x") as? Double
-                val y = mobConfigSection.getConfigurationSection(mobIndex)?.get("y") as? Double
-                val z = mobConfigSection.getConfigurationSection(mobIndex)?.get("z") as? Double
-                val type = mobConfigSection.getConfigurationSection(mobIndex)?.get("type") as? String
+            mobConfigSection?.getKeys(false)?.forEach { mobId ->
+                val x = mobConfigSection.getConfigurationSection(mobId)?.get("x") as? Double
+                val y = mobConfigSection.getConfigurationSection(mobId)?.get("y") as? Double
+                val z = mobConfigSection.getConfigurationSection(mobId)?.get("z") as? Double
+                val type = mobConfigSection.getConfigurationSection(mobId)?.get("type") as? String
 
                 if (x != null && y != null && z != null && type != null) {
                     add(MobLocation(Location(world, x, y, z), type))

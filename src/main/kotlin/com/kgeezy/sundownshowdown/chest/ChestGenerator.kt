@@ -59,12 +59,12 @@ class ChestGenerator(
         block.type = Material.CHEST
 
         val chest = block.state as Chest
-        generateChestContents { chestIndex, item ->
-            chest.inventory.setItem(chestIndex, item)
+        generateChestContents { inventoryIndex, item ->
+            chest.inventory.setItem(inventoryIndex, item)
         }
     }
 
-    private fun generateChestContents(callback: (chestIndex: Int, item: ItemStack) -> Unit) {
+    private fun generateChestContents(callback: (inventoryIndex: Int, item: ItemStack) -> Unit) {
         val rolls = rng.int(2, 5)
 
         for (i in 0 until rolls) {
@@ -86,7 +86,7 @@ class ChestGenerator(
 
     fun getChestLocations(): List<Location> = mutableListOf<Location>().apply {
         chestConfigSection?.getKeys(false)?.forEach { chestId ->
-            getXyzForChestIndex(chestId) { x, y, z ->
+            getXyzForChestId(chestId) { x, y, z ->
                 if (x != null && y != null && z != null) {
                     val location = Location(world, x, y, z)
                     add(location)
@@ -95,10 +95,10 @@ class ChestGenerator(
         }
     }
 
-    private fun getXyzForChestIndex(chestIndex: String, callback: (x: Double?, y: Double?, z: Double?) -> Unit) {
-        val x = chestConfigSection?.getConfigurationSection(chestIndex)?.get("x") as? Double
-        val y = chestConfigSection?.getConfigurationSection(chestIndex)?.get("y") as? Double
-        val z = chestConfigSection?.getConfigurationSection(chestIndex)?.get("z") as? Double
+    private fun getXyzForChestId(id: String, callback: (x: Double?, y: Double?, z: Double?) -> Unit) {
+        val x = chestConfigSection?.getConfigurationSection(id)?.get("x") as? Double
+        val y = chestConfigSection?.getConfigurationSection(id)?.get("y") as? Double
+        val z = chestConfigSection?.getConfigurationSection(id)?.get("z") as? Double
         callback.invoke(x, y, z)
     }
 
@@ -119,7 +119,7 @@ class ChestGenerator(
         var blockFound = false
         if (block?.state is Chest) {
             chestConfigSection?.getKeys(false)?.forEach { chestId ->
-                getXyzForChestIndex(chestId) { x, y, z ->
+                getXyzForChestId(chestId) { x, y, z ->
                     if (x == location.x && y == location.y && z == location.z) {
                         blockFound = true
                         block.setType(Material.AIR, false)
