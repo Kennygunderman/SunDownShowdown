@@ -3,6 +3,7 @@ package com.kgeezy.sundownshowdown
 import com.kgeezy.sundownshowdown.Command.*
 import com.kgeezy.sundownshowdown.chest.ChestGenerator
 import com.kgeezy.sundownshowdown.chest.ItemGenerator
+import com.kgeezy.sundownshowdown.game.Arena
 import com.kgeezy.sundownshowdown.game.Showdown
 import com.kgeezy.sundownshowdown.mob.MobSpawner
 import com.kgeezy.sundownshowdown.scheduler.ShowdownScheduler
@@ -16,12 +17,25 @@ import org.bukkit.plugin.java.JavaPlugin
 const val DEFAULT_WORLD = "world"
 
 class SundownShowdown : JavaPlugin() {
+    private val defaultWorld by lazy {
+        server.getWorld(DEFAULT_WORLD)
+    }
+
+    private val arena by lazy {
+        Arena(defaultWorld, FileManager.getInstance())
+    }
+
+    private val chestGenerator by lazy {
+        ChestGenerator(ItemGenerator(), FileManager.getInstance(), defaultWorld)
+    }
+
+    private val mobSpawner by lazy {
+        MobSpawner(defaultWorld, FileManager.getInstance())
+    }
+
     private val showdown: Showdown by lazy {
-        val defaultWorld = server.getWorld(DEFAULT_WORLD)
-        val chestGenerator = ChestGenerator(ItemGenerator(), FileManager.getInstance(), defaultWorld)
-        val mobSpawner = MobSpawner(defaultWorld)
         val scheduler = ShowdownScheduler(this)
-        Showdown(server, scheduler, chestGenerator, mobSpawner)
+        Showdown(server, arena, chestGenerator, mobSpawner, scheduler)
     }
 
     override fun onEnable() {
@@ -42,7 +56,7 @@ class SundownShowdown : JavaPlugin() {
             return true
         }
 
-        CommandHelper.command(args) { cmd, usage ->
+        CommandHelper.command(args) { cmd, usage, param ->
             when (cmd) {
                 CHEST_ADD -> {
                     if ((sender as Player).world != server.getWorld(DEFAULT_WORLD)) {
@@ -50,7 +64,7 @@ class SundownShowdown : JavaPlugin() {
                         return@command
                     }
 
-                    if (showdown.chestGenerator.createChestAboveBlock(sender, sender.getTargetBlock(null, 200))) {
+                    if (chestGenerator.createChestAboveBlock(sender, sender.getTargetBlock(null, 200))) {
                         sender.sendMessage(StringRes.SHOWDOWN_CHEST_ADDED)
                     }
                 }
@@ -61,7 +75,7 @@ class SundownShowdown : JavaPlugin() {
                 }
 
                 CHEST_REMOVE -> {
-                    if (showdown.chestGenerator.removeChest((sender as Player).getTargetBlock(null, 200).location)) {
+                    if (chestGenerator.removeChest((sender as Player).getTargetBlock(null, 200).location)) {
                         sender.sendMessage(StringRes.SHOWDOWN_CHEST_REMOVE)
                     } else {
                         sender.sendMessage(StringRes.SHOWDOWN_CHEST_NOT_FOUND)
@@ -69,7 +83,7 @@ class SundownShowdown : JavaPlugin() {
                 }
 
                 CHEST_REMOVE_ALL -> {
-                    showdown.chestGenerator.removeAll()
+                    chestGenerator.removeAll()
                     sender.sendMessage(StringRes.SHOWDOWN_CHEST_REMOVE_ALL)
                 }
 
@@ -86,6 +100,61 @@ class SundownShowdown : JavaPlugin() {
                 DISABLE -> {
                     showdown.disable()
                     sender.sendMessage(StringRes.SHOWDOWN_DISABLE)
+                }
+
+                ARENA_SET -> {
+                    param?.toDoubleOrNull()?.let { radius ->
+                        arena.setArena((sender as Player).location, radius)
+                        sender.sendMessage(StringRes.SHOWDOWN_ARENA_CREATED)
+                        return@command
+                    }
+                    sender.sendMessage(StringRes.SHOWDOWN_ARENA_USAGE)
+                }
+
+                ARENA_REMOVE -> {
+                    arena.removeArena()
+                    sender.sendMessage(StringRes.SHOWDOWN_ARENA_REMOVED)
+                }
+
+                ARENA_CLEAR -> {
+                    sender.sendMessage(String.format(StringRes.SHOWDOWN_ARENA_CLEARED, showdown.clearMobs()))
+                }
+
+                MOB_ADD -> {
+                    param?.let { p ->
+                        if (mobSpawner.isMobAvailable(p)) {
+                            val loc = (sender as Player).getTargetBlock(null, 200).location.apply { y++ }
+                            sender.sendMessage(
+                                if (mobSpawner.saveMob(loc, p)) {
+                                    String.format(StringRes.SHOWDOWN_MOB_SPAWN_ADDED, p)
+                                } else {
+                                    StringRes.SHOWDOWN_UNABLE_TO_ADD_MOB
+                                }
+                            )
+                        } else {
+                            sender.sendMessage(StringRes.SHOWDOWN_CANT_ADD_MOB_TYPE)
+                        }
+                    }
+                }
+
+                MOB_REMOVE_ALL -> {
+                    mobSpawner.removeAllMobSpawns()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNS_REMOVED)
+                }
+
+                MOB_SPAWN_POINTS -> {
+                    showdown.mobSpawner.spawnMobsFromConfig()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED)
+                }
+
+                MOB_SPAWN_CHESTS -> {
+                    showdown.spawnMobsAtChests()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED_CHESTS)
+                }
+
+                MOB_SPAWN_ALL -> {
+                    showdown.spawnAllMobs()
+                    sender.sendMessage(StringRes.SHOWDOWN_MOB_SPAWNED_ALL)
                 }
 
                 else -> usage?.let {
