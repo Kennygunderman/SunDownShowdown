@@ -13,7 +13,7 @@ class Arena(private val world: World?, fileManager: ArenaFile) {
         fileConfig.set("${world?.name}.arena.x", location.x)
         fileConfig.set("${world?.name}.arena.y", location.y)
         fileConfig.set("${world?.name}.arena.z", location.z)
-        fileConfig.set("${world?.name}.radius", radius)
+        fileConfig.set("${world?.name}.arena.radius", radius)
         fileConfig.save(yml)
     }
 
@@ -21,7 +21,7 @@ class Arena(private val world: World?, fileManager: ArenaFile) {
         val x = fileConfig.get("${world?.name}.arena.x") as? Double
         val y = fileConfig.get("${world?.name}.arena.y") as? Double
         val z = fileConfig.get("${world?.name}.arena.z") as? Double
-        val radius = fileConfig.get("${world?.name}.radius") as? Double
+        val radius = fileConfig.get("${world?.name}.arena.radius") as? Double
 
         if (x != null && y != null && z != null && radius != null) {
             callback(Location(world, x, y, z), radius)
