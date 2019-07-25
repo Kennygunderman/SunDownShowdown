@@ -4,7 +4,6 @@ import com.kgeezy.sundownshowdown.util.MobFile
 import com.kgeezy.sundownshowdown.util.int
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.EntityType
 import java.util.*
 
@@ -15,11 +14,6 @@ class MobSpawner(val world: World?, fileManager: MobFile) {
 
     private val yml = fileManager.getMobYml()
     private val fileConfig = fileManager.configFromYml(yml)
-
-    private val mobConfigSection: ConfigurationSection?
-        get() = fileConfig
-            .getConfigurationSection("${world?.name}")
-            ?.getConfigurationSection("mobs")
 
     /**
      * maximum amount to spawn if spawning random number of mobs see #spawnRandomMobs
