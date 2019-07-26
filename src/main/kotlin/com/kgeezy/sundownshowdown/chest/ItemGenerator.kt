@@ -234,7 +234,6 @@ class ItemGenerator {
         ItemStack(Material.IRON_BOOTS, 1)
     )
 
-
     fun generateRandomItem(): ItemStack {
         return when (getItemChance()) {
             ItemChance.HIGH -> highTierItems[rng.nextInt(highTierItems.size)]
