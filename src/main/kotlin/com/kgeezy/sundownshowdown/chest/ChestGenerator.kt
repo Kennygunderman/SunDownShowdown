@@ -2,7 +2,7 @@ package com.kgeezy.sundownshowdown.chest
 
 import com.kgeezy.sundownshowdown.StringRes
 import com.kgeezy.sundownshowdown.util.ChestLocationFile
-import com.kgeezy.sundownshowdown.util.int
+import com.kgeezy.sundownshowdown.util.ext.int
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World

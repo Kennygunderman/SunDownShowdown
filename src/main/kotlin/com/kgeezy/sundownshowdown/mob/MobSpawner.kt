@@ -1,7 +1,7 @@
 package com.kgeezy.sundownshowdown.mob
 
 import com.kgeezy.sundownshowdown.util.MobFile
-import com.kgeezy.sundownshowdown.util.int
+import com.kgeezy.sundownshowdown.util.ext.int
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.EntityType
