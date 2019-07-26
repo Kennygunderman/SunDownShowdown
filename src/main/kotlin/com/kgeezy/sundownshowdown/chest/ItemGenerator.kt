@@ -21,7 +21,7 @@ class ItemGenerator {
         Random()
     }
 
-    val lowTierItems = listOf(
+    private val lowTierItems = listOf(
         ItemStack(Material.COOKED_BEEF, rng.int(2, 6)),
         ItemStack(Material.COOKED_PORKCHOP, rng.int(2, 6))
             .withEnchantment(Enchantment.ARROW_FIRE, 3)
@@ -59,7 +59,7 @@ class ItemGenerator {
         ItemStack(Material.ENDER_PEARL, 1)
     )
 
-    val mediumTierItems = listOf(
+    private val mediumTierItems = listOf(
         ItemStack(Material.IRON_HELMET, 1),
         ItemStack(Material.IRON_CHESTPLATE, 1),
         ItemStack(Material.IRON_LEGGINGS, 1),
@@ -95,7 +95,7 @@ class ItemGenerator {
         ItemStack(Material.ENCHANTED_BOOK, 1).withRandomEnchantment()
     )
 
-    val highTierItems = listOf(
+    private val highTierItems = listOf(
         ItemStack(Material.DIAMOND_HELMET, 1),
         ItemStack(Material.DIAMOND_CHESTPLATE, 1),
         ItemStack(Material.DIAMOND_LEGGINGS, 1),
